@@ -1,0 +1,37 @@
+node_modules/
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.DS_Store
+*.log
+playwright-report/
+test-results/
+.next/
+dist/
+build/
+coverage/
+playwright-report.zip
+*.zip
+
+backend/uploads/
+
+# Environment files
+.env*
+!.env.example
+
+# Uploaded files
+backend/uploads/
+
+frontend/test-report.json
+frontend/test-report.xml
+
+# Local password-update script
+backend/update_pw.js
+
+# Local password-update script
+backend/update_pw.js
+
+# Local API testing script
+test.js
