@@ -100,3 +100,4 @@ Host the MySQL instance on a managed database provider for automated backups and
 
 ## 🧪 Testing
 Run backend unit testing structure via `npm test` inside the backend directory. Focus areas for tests: API route validation, RBAC rejection on forbidden routes, File Upload size limitations, and Booking Slot conflict prevention logic.
+Mon Nov  2 01:11:13 IST 2026
