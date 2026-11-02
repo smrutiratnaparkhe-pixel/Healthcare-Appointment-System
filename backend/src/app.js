@@ -23,17 +23,27 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
+const allowedOrigins = [
+  config.server.frontendUrl,
+  'http://localhost:3000',
+  // Support comma-separated list of extra allowed origins via env var
+  ...(process.env.EXTRA_ALLOWED_ORIGINS ? process.env.EXTRA_ALLOWED_ORIGINS.split(',').map(o => o.trim()) : []),
+];
+
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps, curl, or same-origin)
     if (!origin) return callback(null, true);
-    
-    if (origin === config.server.frontendUrl || 
-        origin === 'http://localhost:3000' || 
-        origin.endsWith('.vercel.app')) {
-      return callback(null, true);
-    }
-    
+
+    // Check exact match against the allow-list
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+
+    // Allow any Vercel deployment of this project
+    if (origin.endsWith('.vercel.app')) return callback(null, true);
+
+    // Allow any Render.com deployment of this project
+    if (origin.endsWith('.onrender.com')) return callback(null, true);
+
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,

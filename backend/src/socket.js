@@ -7,7 +7,19 @@ let io;
 const initSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: config.server.frontendUrl,
+      origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        // Exact match against configured frontend URL or localhost
+        const allowed = [
+          config.server.frontendUrl,
+          'http://localhost:3000',
+          ...(process.env.EXTRA_ALLOWED_ORIGINS ? process.env.EXTRA_ALLOWED_ORIGINS.split(',').map(o => o.trim()) : []),
+        ];
+        if (allowed.includes(origin)) return callback(null, true);
+        if (origin.endsWith('.onrender.com')) return callback(null, true);
+        if (origin.endsWith('.vercel.app')) return callback(null, true);
+        return callback(new Error('Not allowed by CORS'));
+      },
       methods: ['GET', 'POST'],
       credentials: true
     }

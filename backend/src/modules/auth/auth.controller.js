@@ -19,16 +19,17 @@ function generateTokens(userId) {
  * Set auth cookies
  */
 function setAuthCookies(res, accessToken, refreshToken) {
+  const isProd = process.env.NODE_ENV === 'production';
   res.cookie('access_token', accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProd,                        // must be true when sameSite='none'
+    sameSite: isProd ? 'none' : 'lax',    // 'none' required for cross-origin (Render frontend ↔ backend)
     maxAge: 15 * 60 * 1000, // 15 minutes
   });
   res.cookie('refresh_token', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
     path: '/api/auth/refresh',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
