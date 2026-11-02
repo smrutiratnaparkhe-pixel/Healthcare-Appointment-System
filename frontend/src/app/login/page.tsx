@@ -43,34 +43,73 @@ export default function LoginPage() {
 
   const checkAuth = useAuthStore((state) => state.checkAuth);
 
+
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     setIsLoading(true);
-    try {
-      const response: any = await api.post("/auth/login", values);
-      
-      const roles = response.data.user.roles || [];
-      
-      // For hospital_admin and doctor, fetch full profile so access control checks work
-      // (hospitalAdmin relation for pending check, first_login_completed for setup check)
-      if (roles.includes("hospital_admin") || roles.includes("doctor")) {
-        await checkAuth(); // fetches /auth/me which includes full profile data
-      } else {
-        setUser(response.data.user);
-      }
-      
-      toast.success("Login successful");
-      
-      if (roles.includes("super_admin")) router.push("/admin");
-      else if (roles.includes("hospital_admin")) router.push("/hospital");
-      else if (roles.includes("doctor")) router.push("/doctor");
-      else router.push("/patient");
-      
-    } catch (error: any) {
-      toast.error(error.message || "Failed to login");
-    } finally {
+
+    const demoUsers = [
+      {
+        email: "admin@healthcare.com",
+        password: "Admin@123",
+        firstName: "Demo",
+        lastName: "Admin",
+        roles: ["super_admin"],
+        id: 1,
+      },
+      {
+        email: "patient@healthcare.com",
+        password: "Patient@123",
+        firstName: "Demo",
+        lastName: "Patient",
+        roles: ["patient"],
+        id: 2,
+      },
+      {
+        email: "dr.rahul@healthcare.com",
+        password: "Doctor@123",
+        firstName: "Rahul",
+        lastName: "Sharma",
+        roles: ["doctor"],
+        id: 3,
+        firstLoginCompleted: true,
+        doctor: {},
+      },
+      {
+        email: "hadmin@apollo.com",
+        password: "HAdmin@123",
+        firstName: "Hospital",
+        lastName: "Admin",
+        roles: ["hospital_admin"],
+        id: 4,
+        firstLoginCompleted: true,
+        hospitalAdmin: {},
+      },
+    ];
+
+    const demoUser = demoUsers.find(
+      (user) =>
+        user.email.toLowerCase() === values.email.toLowerCase() &&
+        user.password === values.password
+    );
+
+    if (!demoUser) {
+      toast.error("Use the demo credentials provided for your selected role.");
       setIsLoading(false);
+      return;
     }
+
+    const { password, ...user } = demoUser;
+    setUser(user);
+    toast.success("Demo login successful");
+
+    if (user.roles.includes("super_admin")) router.push("/admin");
+    else if (user.roles.includes("hospital_admin")) router.push("/hospital");
+    else if (user.roles.includes("doctor")) router.push("/doctor");
+    else router.push("/patient");
+
+    setIsLoading(false);
   }
+
 
   return (
     <div className="min-h-screen flex w-full bg-white">
