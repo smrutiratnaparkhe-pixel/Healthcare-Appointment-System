@@ -63,7 +63,7 @@ services:
     name: healthcare-frontend
     runtime: node
     rootDir: frontend
-    buildCommand: npm install && npm run build
+    buildCommand: npm ci --include=dev && npm run build
     startCommand: npm start
     envVars:
       # Must point to the deployed backend URL so the browser can reach the API
@@ -72,7 +72,12 @@ services:
           name: healthcare-backend
           type: web
           property: host
-          # Render fills this in as https://<service>.onrender.com/api
       # Tell Next.js it's running in production
       - key: NODE_ENV
         value: production
+      # Disable ESLint during build (Next.js 16 removed the config key and CLI flag)
+      - key: NEXT_DISABLE_ESLINT_PLUGIN
+        value: "1"
+      # Disable Next.js telemetry
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
