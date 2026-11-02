@@ -243,7 +243,7 @@ export default function DashboardLayout({
             <div className="w-8 h-8 rounded-lg bg-[#10b981] shadow-sm shadow-emerald-500/20 flex items-center justify-center text-white">
               <Activity className="w-5 h-5" />
             </div>
-            <span className="text-lg font-semibold text-gray-900 tracking-tight">MediConnecttttt</span>
+            <span className="text-lg font-semibold text-gray-900 tracking-tight">MediConnec</span>
           </Link>
           <Button 
             variant="ghost" 
