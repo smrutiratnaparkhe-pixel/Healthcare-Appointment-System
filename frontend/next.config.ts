@@ -4,12 +4,8 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   // Expose the backend URL to the browser bundle at build time.
-  // Render sets NEXT_PUBLIC_API_URL as a build-time env var; this makes it
-  // available to client components via process.env.NEXT_PUBLIC_API_URL.
+  // Render injects NEXT_PUBLIC_API_URL as a build-time env var.
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api",
   },
