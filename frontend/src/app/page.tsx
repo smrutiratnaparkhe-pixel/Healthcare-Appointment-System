@@ -51,7 +51,7 @@ export default function LandingPage() {
                   The new standard in healthcare IT
                 </div>
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 mb-6 leading-[1.1]">
-                  Healthcare
+                  Healthcare infrastructure for the modern era.
                 </h1>
                 <p className="text-lg md:text-xl text-gray-500 mb-10 max-w-2xl mx-auto lg:mx-0">
                   A unified platform bridging the gap between patients, medical professionals, and hospitals with seamless scheduling, secure records, and dynamic discovery.
