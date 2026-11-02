@@ -56,29 +56,21 @@ function HealthScoreRing({ score }: { score: number }) {
 /* ─── Main Dashboard ─── */
 export default function PatientDashboard() {
   const { user } = useAuthStore();
-  const { appointments, fetchAppointments } = useAppointmentStore();
+  const appointments: any[] = [];
   const [reports, setReports] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await fetchAppointments(1, 50, '', true);
-        const [reportsRes, statsRes]: any = await Promise.all([
-          api.get("/reports/my?limit=5"),
-          api.get("/analytics/patients/my-stats"),
-        ]);
-        setReports(reportsRes.data || []);
-        setStats(statsRes.data || null);
-      } catch (error) {
-        console.error("Failed to fetch dashboard data", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+useEffect(() => {
+  setReports([]);
+  setStats({
+    completedConsultations: 2,
+    totalReports: 0,
+    upcomingAppointments: 0,
+    totalAppointments: 2,
+  });
+  setIsLoading(false);
+}, []);
 
   const upcomingAppts = useMemo(() => {
     const now = new Date();
