@@ -6,7 +6,7 @@ export const demoUsers: Record<DemoRole, User> = {
   patient: {
     id: 2,
     email: 'patient.demo@mediconnect.test',
-    firstName: 'Aarav',
+    firstName: 'Smruti',
     lastName: 'Mehta',
     roles: ['patient'],
     firstLoginCompleted: true,

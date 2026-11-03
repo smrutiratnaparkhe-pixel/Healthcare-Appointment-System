@@ -21,15 +21,15 @@ function demoDataFor(url: string, method: string) {
   if (path.includes('/notifications')) return [];
   if (path.includes('/hospital-manage') && path.includes('/stats')) return { totalAppointments: 126, todayAppointments: 8, pendingAppointments: 4 };
   if (path.includes('/appointments')) return [
-    { id: 301, patient_id: 2, doctor_id: 3, hospital_id: 1, slot_id: 1, status_id: 2, status_name: 'Confirmed', status_color: '#10B981', appointment_date: date(1), start_time: '10:30:00', end_time: '11:00:00', reason: 'Annual health checkup', consultation_type: 'In-person', notes: null, cancellation_reason: null, doctor_first_name: 'Rahul', doctor_last_name: 'Sharma', doctor_avatar: null, patient_first_name: 'Aarav', patient_last_name: 'Mehta', patient_avatar: null, hospital_name: 'City Care Hospital' },
-    { id: 302, patient_id: 2, doctor_id: 3, hospital_id: 1, slot_id: 2, status_id: 4, status_name: 'Completed', status_color: '#6B7280', appointment_date: date(-4), start_time: '14:00:00', end_time: '14:30:00', reason: 'Follow-up consultation', consultation_type: 'In-person', notes: null, cancellation_reason: null, doctor_first_name: 'Rahul', doctor_last_name: 'Sharma', doctor_avatar: null, patient_first_name: 'Aarav', patient_last_name: 'Mehta', patient_avatar: null, hospital_name: 'City Care Hospital' },
+    { id: 301, patient_id: 2, doctor_id: 3, hospital_id: 1, slot_id: 1, status_id: 2, status_name: 'Confirmed', status_color: '#10B981', appointment_date: date(1), start_time: '10:30:00', end_time: '11:00:00', reason: 'Annual health checkup', consultation_type: 'In-person', notes: null, cancellation_reason: null, doctor_first_name: 'Rahul', doctor_last_name: 'Sharma', doctor_avatar: null, patient_first_name: 'Smruti', patient_last_name: 'Mehta', patient_avatar: null, hospital_name: 'City Care Hospital' },
+    { id: 302, patient_id: 2, doctor_id: 3, hospital_id: 1, slot_id: 2, status_id: 4, status_name: 'Completed', status_color: '#6B7280', appointment_date: date(-4), start_time: '14:00:00', end_time: '14:30:00', reason: 'Follow-up consultation', consultation_type: 'In-person', notes: null, cancellation_reason: null, doctor_first_name: 'Rahul', doctor_last_name: 'Sharma', doctor_avatar: null, patient_first_name: 'Smruti', patient_last_name: 'Mehta', patient_avatar: null, hospital_name: 'City Care Hospital' },
   ];
   if (path.includes('/hospitals/admin/all')) return [];
   if (/\/hospitals\/\d+$/.test(path)) return { id: 1, hospital_name: 'City Care Hospital', doctors: [], departments: [] };
   if (path.includes('/hospitals')) return [];
   if (path.includes('/users')) return [
     { id: 1, first_name: 'Demo', last_name: 'Admin', email: 'admin.demo@mediconnect.test', roles: ['super_admin'], is_active: 1 },
-    { id: 2, first_name: 'Aarav', last_name: 'Mehta', email: 'patient.demo@mediconnect.test', roles: ['patient'], is_active: 1 },
+    { id: 2, first_name: 'Smruti', last_name: 'Mehta', email: 'patient.demo@mediconnect.test', roles: ['patient'], is_active: 1 },
     { id: 3, first_name: 'Rahul', last_name: 'Sharma', email: 'doctor.demo@mediconnect.test', roles: ['doctor'], is_active: 1 },
     { id: 4, first_name: 'Priya', last_name: 'Kapoor', email: 'hospital.demo@mediconnect.test', roles: ['hospital_admin'], is_active: 1 },
   ];
