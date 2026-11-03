@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import api from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
+import { demoDashboardPath, demoRoleLabels, type DemoRole } from "@/lib/demo";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -32,6 +33,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const setUser = useAuthStore((state) => state.setUser);
+  const startDemo = useAuthStore((state) => state.startDemo);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -41,74 +43,56 @@ export default function LoginPage() {
     },
   });
 
-  const checkAuth = useAuthStore((state) => state.checkAuth);
+  function enterDemo(role: DemoRole) {
+    startDemo(role);
+    toast.success(`Opening ${demoRoleLabels[role]} demo dashboard`);
+    router.push(demoDashboardPath(role));
+  }
 
 
-  async function onSubmit(values: z.infer<typeof loginSchema>) {
-    setIsLoading(true);
+async function onSubmit(values: z.infer<typeof loginSchema>) {
+  setIsLoading(true);
 
-    const demoUsers = [
-      {
-        email: "admin@healthcare.com",
-        password: "Admin@123",
-        firstName: "Demo",
-        lastName: "Admin",
-        roles: ["super_admin"],
-        id: 1,
-      },
-      {
-        email: "patient@healthcare.com",
-        password: "Patient@123",
-        firstName: "Demo",
-        lastName: "Patient",
-        roles: ["patient"],
-        id: 2,
-      },
-      {
-        email: "dr.rahul@healthcare.com",
-        password: "Doctor@123",
-        firstName: "Rahul",
-        lastName: "Sharma",
-        roles: ["doctor"],
-        id: 3,
-        firstLoginCompleted: true,
-        doctor: {},
-      },
-      {
-        email: "hadmin@apollo.com",
-        password: "HAdmin@123",
-        firstName: "Hospital",
-        lastName: "Admin",
-        roles: ["hospital_admin"],
-        id: 4,
-        firstLoginCompleted: true,
-        hospitalAdmin: {},
-      },
-    ];
+  try {
+    const response: any = await api.post("/auth/login", {
+      email: values.email.trim(),
+      password: values.password,
+    });
 
-    const demoUser = demoUsers.find(
-      (user) =>
-        user.email.toLowerCase() === values.email.toLowerCase() &&
-        user.password === values.password
-    );
+    const data = response.data;
+    const loggedInUser = data.user;
 
-    if (!demoUser) {
-      toast.error("Use the demo credentials provided for your selected role.");
-      setIsLoading(false);
-      return;
+    if (!loggedInUser) {
+      throw new Error("User details were not returned by the server.");
     }
 
-    const { password, ...user } = demoUser;
-    setUser(user);
-    toast.success("Demo login successful");
+    setUser({
+      id: loggedInUser.id,
+      email: loggedInUser.email,
+      firstName: loggedInUser.firstName || "",
+      lastName: loggedInUser.lastName || "",
+      roles: loggedInUser.roles || [],
+      avatar: loggedInUser.avatar || "",
+      firstLoginCompleted: true,
+    });
 
-    if (user.roles.includes("super_admin")) router.push("/admin");
-    else if (user.roles.includes("hospital_admin")) router.push("/hospital");
-    else if (user.roles.includes("doctor")) router.push("/doctor");
-    else router.push("/patient");
+    toast.success("Login successful");
 
+    if (loggedInUser.roles?.includes("super_admin")) {
+      router.push("/admin");
+    } else if (loggedInUser.roles?.includes("hospital_admin")) {
+      router.push("/hospital");
+    } else if (loggedInUser.roles?.includes("doctor")) {
+      router.push("/doctor");
+    } else {
+      router.push("/patient");
+    }
+  } catch (error: any) {
+    toast.error(error.message || "Login failed. Check your email and password.");
+  } finally {
     setIsLoading(false);
   }
+}
 
 
   return (
@@ -125,6 +109,21 @@ export default function LoginPage() {
 
           <h1 className="text-3xl font-semibold text-gray-900 tracking-tight mb-2">Welcome back</h1>
           <p className="text-gray-500 mb-8">Please enter your details to sign in.</p>
+
+          <section className="mb-7 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4" aria-label="Explore demo dashboards">
+            <div className="mb-3">
+              <h2 className="text-sm font-semibold text-emerald-950">Explore the dashboards</h2>
+              <p className="mt-1 text-xs text-emerald-800">Choose a sample role. Demo mode works without a database.</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {(['patient', 'doctor', 'hospital_admin', 'super_admin'] as DemoRole[]).map((role) => (
+                <Button key={role} type="button" variant="outline" onClick={() => enterDemo(role)}
+                  className="h-9 border-emerald-200 bg-white text-xs text-emerald-900 hover:bg-emerald-100">
+                  {demoRoleLabels[role]}
+                </Button>
+              ))}
+            </div>
+          </section>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">

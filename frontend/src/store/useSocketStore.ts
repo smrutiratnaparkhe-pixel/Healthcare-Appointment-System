@@ -20,7 +20,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
     const backendUrl = process.env.NEXT_PUBLIC_API_URL 
       ? process.env.NEXT_PUBLIC_API_URL.replace('/api', '') 
-      : 'http://localhost:5000';
+      : 'http://localhost:5001';
 
     const socket = io(backendUrl, {
       auth: { token },

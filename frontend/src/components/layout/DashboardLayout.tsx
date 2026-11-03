@@ -23,6 +23,7 @@ import {
   Layers
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
+import { demoDashboardPath, demoRoleLabels, type DemoRole } from "@/lib/demo";
 import { useSocketStore } from "@/store/useSocketStore";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -45,7 +46,7 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, isLoading, logout } = useAuthStore();
+  const { user, isAuthenticated, isLoading, isDemo, startDemo, logout } = useAuthStore();
   const { connect: connectSocket, disconnect: disconnectSocket } = useSocketStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -315,6 +316,21 @@ export default function DashboardLayout({
         {/* Top Header */}
         <header className="h-14 sticky top-0 z-30 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-8">
           <div className="flex items-center gap-3">
+            {isDemo && (
+              <div className="flex max-w-[58vw] items-center gap-1 overflow-x-auto rounded-lg border border-emerald-100 bg-emerald-50 p-1 sm:max-w-none" aria-label="Switch demo dashboard">
+                {(['patient', 'doctor', 'hospital_admin', 'super_admin'] as DemoRole[]).map((demoRole) => (
+                  <button key={demoRole} type="button" onClick={() => {
+                    startDemo(demoRole);
+                    router.push(demoDashboardPath(demoRole));
+                  }}
+                    aria-label={`Switch to ${demoRoleLabels[demoRole]} dashboard`}
+                    title={demoRoleLabels[demoRole]}
+                    className={`whitespace-nowrap rounded-md px-2 py-1.5 text-[10px] font-semibold transition-colors sm:text-[11px] ${role === demoRole ? 'bg-white text-emerald-800 shadow-sm' : 'text-emerald-700 hover:bg-white/70'}`}>
+                    {demoRoleLabels[demoRole]}
+                  </button>
+                ))}
+              </div>
+            )}
             <Button 
               variant="ghost" 
               size="icon" 

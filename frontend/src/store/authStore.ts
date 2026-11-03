@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import api from '@/lib/api';
+import { demoUsers, type DemoRole } from '@/lib/demo';
 
 export interface User {
   id: number;
@@ -24,7 +25,9 @@ interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isDemo: boolean;
   setUser: (user: User | null) => void;
+  startDemo: (role: DemoRole) => void;
   checkAuth: () => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -35,10 +38,16 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isAuthenticated: false,
       isLoading: true,
+      isDemo: false,
       
-      setUser: (user) => set({ user, isAuthenticated: !!user, isLoading: false }),
+      setUser: (user) => set({ user, isAuthenticated: !!user, isLoading: false, isDemo: false }),
+      startDemo: (role) => set({ user: demoUsers[role], isAuthenticated: true, isLoading: false, isDemo: true }),
       
       checkAuth: async () => {
+        if (useAuthStore.getState().isDemo) {
+          set({ isLoading: false });
+          return;
+        }
         try {
           const response: any = await api.get('/auth/me');
           const d = response.data;
@@ -57,17 +66,17 @@ export const useAuthStore = create<AuthState>()(
           };
           set({ user: mappedUser, isAuthenticated: true, isLoading: false });
         } catch (error) {
-          set({ user: null, isAuthenticated: false, isLoading: false });
+          set({ user: null, isAuthenticated: false, isLoading: false, isDemo: false });
         }
       },
       
       logout: async () => {
         try {
-          await api.post('/auth/logout');
+          if (!useAuthStore.getState().isDemo) await api.post('/auth/logout');
         } catch (error) {
           console.error('Logout failed:', error);
         } finally {
-          set({ user: null, isAuthenticated: false, isLoading: false });
+          set({ user: null, isAuthenticated: false, isLoading: false, isDemo: false });
           // Force reload to clear all states
           if (typeof window !== 'undefined') {
             window.location.href = '/login';
@@ -77,7 +86,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }), // Only persist these
+      partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated, isDemo: state.isDemo }),
     }
   )
 );
