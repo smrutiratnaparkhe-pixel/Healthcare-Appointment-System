@@ -44,8 +44,10 @@ export const useAuthStore = create<AuthState>()(
       startDemo: (role) => set({ user: demoUsers[role], isAuthenticated: true, isLoading: false, isDemo: true }),
       
       checkAuth: async () => {
-        if (useAuthStore.getState().isDemo) {
-          set({ isLoading: false });
+        const currentState = useAuthStore.getState();
+        if (currentState.isDemo) {
+          const demoRole = currentState.user?.roles.find((role): role is DemoRole => role in demoUsers);
+          set({ user: demoRole ? demoUsers[demoRole] : currentState.user, isLoading: false });
           return;
         }
         try {
