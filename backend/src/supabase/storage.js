@@ -1,3 +1,4 @@
+const ws = require('ws');
 const { createClient } = require('@supabase/supabase-js');
 const config = require('../config');
 const { v4: uuidv4 } = require('uuid');
@@ -8,7 +9,11 @@ let supabase = null;
 
 // Initialize Supabase if credentials are provided
 if (config.supabase.url && config.supabase.serviceRoleKey && !config.supabase.url.includes('your-project-id')) {
-  supabase = createClient(config.supabase.url, config.supabase.serviceRoleKey);
+  supabase = createClient(config.supabase.url, config.supabase.serviceRoleKey, {
+  realtime: {
+    transport: ws
+  }
+});
   console.log('✅ Supabase Storage initialized');
 }
 
